@@ -1,0 +1,31 @@
+<?php
+
+namespace App\Http\Controllers\Dashboard;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use App\Models\User;
+
+class Verifikasi_controller extends Controller
+{
+    public function index(){
+        $title = 'Verifikasi Peserta';
+        return view('dashboard.verifikasi.index',compact('title'));
+    }
+    public function verifikasi(Request $request ){
+        $this->validate($request, [
+            'id_pendaftaran'=>'required'
+        ]);
+        $id = $request->id_pendaftaran;
+        $cek = User::where('id_registrasi',$id)->count();
+        if($cek > 0){
+            User::where('id_registrasi',$id)->update(['is_verifikasi'=>1]);
+            \Session::flash('berhasil','Peserta Berhasil Di Verifikasi');
+
+        }
+        else{
+            \Session::flash('gagal','ID Pendaftaran Tidak DiTemukan');
+        }
+        return redirect()->back();
+    }
+}
